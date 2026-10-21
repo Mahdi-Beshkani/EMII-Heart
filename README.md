@@ -17,6 +17,7 @@ A little heart made with love, surrounded by **“I Love You”** in different l
 
 * HTML5
 * CSS3
+* javascript
 
 ## 👤 Author
 
