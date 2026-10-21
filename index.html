@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>A heart in every language</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; background: #000; }
+    body { background: radial-gradient(ellipse at center, #351052 0%, #210b35 32%, #0d0614 62%, #000 100%); }
+    body { overflow: hidden; }
+    main { width: 100%; height: 100%; height: 100svh; display: grid; place-items: center;
+      padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+        max(32px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+    svg { display: block; width: min(100%, calc((100vh - 52px) * 1.17647), 1120px);
+      width: min(100%, calc((100svh - 52px) * 1.17647), 1120px); max-width: 100%; max-height: 100%;
+      aspect-ratio: 1000 / 850; overflow: visible; }
+    .phrase { fill: #b56cff; opacity: 0; font: 15px Arial, "Segoe UI", sans-serif;
+      text-anchor: middle; dominant-baseline: central; unicode-bidi: plaintext;
+      white-space: pre; }
+    .accessible { position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip-path: inset(50%); }
+    noscript { color: #c084fc; font: 18px sans-serif; text-align: center; }
+    footer { position: fixed; bottom: max(10px, env(safe-area-inset-bottom));
+      left: 0; width: 100%; text-align: center; color: #8b5cf6;
+      font: 9px Arial, sans-serif; letter-spacing: 1.2px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="accessible">I love you, in every language.</h1>
+    <svg viewBox="0 0 1000 850" role="img" aria-labelledby="heart-title heart-description">
+      <title id="heart-title">A heart in every language</title>
+      <desc id="heart-description">Phrases meaning I love you appear one by one in a clockwise sweep to form a red heart. Afterward, short white glints sparkle across individual phrases like diamonds.</desc>
+      <defs id="sparkle-defs"></defs>
+      <g id="words" aria-hidden="true"></g>
+      <g id="sparkles" aria-hidden="true" pointer-events="none"></g>
+    </svg>
+    <noscript>Please enable JavaScript to see the heart animation. ♥</noscript>
+  </main>
+  <footer>Made with ♥ by EMII</footer>
+  <script>
+  (() => {
+    'use strict';
+    const phrases = [
+      ['دوستت دارم', 'fa'], ['I love you', 'en'], ['Je t’aime', 'fr'],
+      ['Te amo', 'es'], ['Ich liebe dich', 'de'], ['Ti amo', 'it'],
+      ['أحبك', 'ar'], ['Seni seviyorum', 'tr'], ['Eu te amo', 'pt'],
+      ['Я тебя люблю', 'ru'], ['我爱你', 'zh'], ['愛してる', 'ja'],
+      ['사랑해', 'ko'], ['Σ’ αγαπώ', 'el'], ['Ik hou van jou', 'nl'],
+      ['Jag älskar dig', 'sv'], ['Kocham cię', 'pl'], ['मैं तुमसे प्यार करता हूँ', 'hi'],
+      ['Mahal kita', 'tl'], ['Szeretlek', 'hu'], ['Te iubesc', 'ro'],
+      ['Tôi yêu bạn', 'vi'], ['ฉันรักคุณ', 'th'], ['Aku cinta kamu', 'id'],
+      ['אני אוהב אותך', 'he'], ['Я тебе кохаю', 'uk'], ['Miluji tě', 'cs'],
+      ['Saan sin jaalladha', 'om'], ['Nakupenda', 'sw'], ['Ek is lief vir jou', 'af'],
+      ['Ես քեզ սիրում եմ', 'hy'], ['მიყვარხარ', 'ka'], ['Aš tave myliu', 'lt'],
+      ['Es tevi mīlu', 'lv'], ['Ma armastan sind', 'et'], ['Volim te', 'hr'],
+      ['Të dua', 'sq'], ['T’estimo', 'ca'], ['Rwy’n dy garu di', 'cy'],
+      ['Aloha au iā ʻoe', 'haw'], ['ຂ້ອຍຮັກເຈົ້າ', 'lo'],
+      ['Jeg elsker dig', 'da'], ['Jeg elsker deg', 'nb'], ['Rakastan sinua', 'fi'],
+      ['Ég elska þig', 'is'], ['Ľúbim ťa', 'sk'], ['Ljubim te', 'sl'],
+      ['Те сакам', 'mk'], ['Обичам те', 'bg'], ['Волим те', 'sr'],
+      ['Səni sevirəm', 'az'], ['Men seni sevaman', 'uz'], ['Мен сені сүйемін', 'kk'],
+      ['Би чамд хайртай', 'mn'], ['میں تم سے محبت کرتا ہوں', 'ur'],
+      ['আমি তোমাকে ভালোবাসি', 'bn'], ['ਮੈਂ ਤੈਨੂੰ ਪਿਆਰ ਕਰਦਾ ਹਾਂ', 'pa'],
+      ['હું તને પ્રેમ કરું છું', 'gu'], ['माझं तुझ्यावर प्रेम आहे', 'mr'],
+      ['म तिमीलाई माया गर्छु', 'ne'], ['நான் உன்னை காதலிக்கிறேன்', 'ta'],
+      ['నేను నిన్ను ప్రేమిస్తున్నాను', 'te'], ['ನಾನು ನಿನ್ನನ್ನು ಪ್ರೀತಿಸುತ್ತೇನೆ', 'kn'],
+      ['ഞാൻ നിന്നെ സ്നേഹിക്കുന്നു', 'ml'], ['මම ඔයාට ආදරෙයි', 'si'],
+      ['ខ្ញុំស្រឡាញ់អ្នក', 'km'], ['Aku tresna karo kowe', 'jv'],
+      ['Abdi bogoh ka anjeun', 'su'], ['Gihigugma tika', 'ceb'],
+      ['Aroha ana ahau ki a koe', 'mi'], ['Ou te alofa ia te oe', 'sm'],
+      ['Inħobbok', 'mt'], ['Is breá liom tú', 'ga'], ['Tha gaol agam ort', 'gd'],
+      ['Maite zaitut', 'eu'], ['Quérote', 'gl'], ['Mi amas vin', 'eo'],
+      ['Te amō', 'la'], ['Mo nífẹ̀ẹ́ rẹ', 'yo'], ['A hụrụ m gị n’anya', 'ig'],
+      ['Ngiyakuthanda', 'zu'], ['Ndiyakuthanda', 'xh'], ['Ndinokuda', 'sn']
+    ];
+    const ns = 'http://www.w3.org/2000/svg';
+    const group = document.getElementById('words');
+    const measure = document.createElement('canvas').getContext('2d');
+    const BASE_FONT_SIZE = 15;
+    const MIN_SCALE = 0.82; // Never squash a phrase so much that it becomes tiny.
+    measure.font = `${BASE_FONT_SIZE}px Arial, \"Segoe UI\", sans-serif`;
+    const words = [];
+    let phraseIndex = 0;
+
+    function inside(x, y) {
+      return Math.pow(x*x + y*y - 1, 3) - x*x*y*y*y <= 0;
+    }
+
+    // Build the heart from horizontal slices. A phrase is only placed when it
+    // can fit at a readable size; long phrases are skipped instead of crushed.
+    for (let row = 0; row < 45; row++) {
+      const y = 1.13 - row * 0.048;
+      const intervals = [];
+      let start = null;
+      for (let step = 0; step <= 1400; step++) {
+        const x = -1.4 + step * 0.002;
+        const hit = inside(x, y);
+        if (hit && start === null) start = x;
+        if ((!hit || step === 1400) && start !== null) {
+          intervals.push([start, x - 0.002]);
+          start = null;
+        }
+      }
+
+      for (const [left, right] of intervals) {
+        const available = (right - left) * 385 - 8;
+        if (available < 30) continue;
+
+        const line = [];
+        let used = 0;
+        let safety = 0;
+        while (safety < phrases.length) {
+          safety++;
+          const item = phrases[phraseIndex % phrases.length];
+          const width = Math.max(1, measure.measureText(item[0]).width);
+          const gap = line.length ? 6 : 0;
+          const nextUsed = used + gap + width;
+
+          if (nextUsed > available) {
+            // If this slice is empty, move past an overlong phrase and look
+            // for a shorter one. Otherwise leave it for a wider slice below.
+            if (line.length === 0 && width * MIN_SCALE > available) {
+              phraseIndex++;
+              continue;
+            }
+            break;
+          }
+
+          line.push({ item, width });
+          used = nextUsed;
+          phraseIndex++;
+          if (used >= available - 22) break;
+        }
+
+        if (!line.length || used <= 0) continue;
+        const scale = Math.min(1.08, available / used);
+        // A final guard against unexpectedly narrow or unmeasurable phrases.
+        if (scale < MIN_SCALE) continue;
+        const total = used * scale;
+        let cursor = 500 + (left + right) * 385 / 2 - total / 2;
+
+        for (const { item, width } of line) {
+          const text = document.createElementNS(ns, 'text');
+          const fittedWidth = width * scale;
+          text.setAttribute('class', 'phrase');
+          text.setAttribute('x', (cursor + fittedWidth / 2).toFixed(2));
+          text.setAttribute('y', (45 + (1.24 - y) * 350).toFixed(2));
+          text.setAttribute('textLength', fittedWidth.toFixed(2));
+          text.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+          text.setAttribute('lang', item[1]);
+          text.setAttribute('direction', ['fa', 'ar', 'he', 'ur'].includes(item[1]) ? 'rtl' : 'ltr');
+          text.textContent = item[0];
+          group.appendChild(text);
+          words.push(text);
+          cursor += fittedWidth + 6 * scale;
+        }
+      }
+    }
+
+    const angle = word => (Math.atan2(+word.getAttribute('x') - 500,
+      400 - +word.getAttribute('y')) + 2*Math.PI) % (2*Math.PI);
+    words.sort((a, b) => angle(a) - angle(b));
+    for (let i = 0; i < 2; i++) {
+      words[i].textContent = phrases[i][0];
+      words[i].setAttribute('lang', phrases[i][1]);
+      words[i].setAttribute('direction', i === 0 ? 'rtl' : 'ltr');
+    }
+    words.forEach(word => group.appendChild(word));
+    const defs = document.getElementById('sparkle-defs');
+    const sparkles = document.getElementById('sparkles');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const interval = 12000 / words.length;
+    const revealAt = index => index < 2 ? index * 450 : 900 + (index - 2) * interval;
+    const fade = 380;
+    let elapsed = 0;
+    let previousTime = null;
+    let nextTwinkle = Infinity;
+    let lastWord = -1;
+    let complete = false;
+    const active = new Map();
+    const random = (low, high) => low + Math.random() * (high - low);
+    const buildDuration = revealAt(words.length - 1) + fade;
+    function smooth(t) { return t*t*(3-2*t); }
+    function clearSparkle(index, state) {
+      words[index].style.fill = '';
+      words[index].style.filter = '';
+      state.gradient.remove();
+      state.star.remove();
+    }
+    function startSparkle(index) {
+      const word = words[index];
+      const gradient = document.createElementNS(ns, 'linearGradient');
+      gradient.id = `glint-${index}`;
+      gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
+      for (const [offset, color] of [[0, '#6d28d9'], [.3, '#c084fc'],
+        [.5, '#ffffff'], [.7, '#c084fc'], [1, '#6d28d9']]) {
+        const stop = document.createElementNS(ns, 'stop');
+        stop.setAttribute('offset', offset);
+        stop.setAttribute('stop-color', color);
+        gradient.appendChild(stop);
+      }
+      defs.appendChild(gradient);
+      const star = document.createElementNS(ns, 'path');
+      star.setAttribute('d', 'M0 -9 Q1 -1 6 0 Q1 1 0 9 Q-1 1 -6 0 Q-1 -1 0 -9Z');
+      star.setAttribute('fill', 'white');
+      star.setAttribute('opacity', '0');
+      sparkles.appendChild(star);
+      word.style.fill = `url(#${gradient.id})`;
+      active.set(index, {start: elapsed, duration: random(900, 1450), gradient, star,
+        x: +word.getAttribute('x'), y: +word.getAttribute('y'),
+        width: +word.getAttribute('textLength')});
+    }
+
+    function tick(time) {
+      if (previousTime !== null) elapsed += Math.min(time - previousTime, 100);
+      previousTime = time;
+      if (reducedMotion.matches) {
+        for (const [index, state] of active) clearSparkle(index, state);
+        for (const word of words) { word.style.opacity = '1'; word.style.fill = ''; }
+        active.clear();
+      } else {
+        if (!complete) {
+          words.forEach((word, i) => {
+            const progress = Math.max(0, Math.min(1, (elapsed - revealAt(i)) / fade));
+            word.style.opacity = smooth(progress).toFixed(3);
+          });
+          if (elapsed >= buildDuration) {
+            complete = true;
+            nextTwinkle = elapsed + random(250, 650);
+          }
+        }
+        if (elapsed >= nextTwinkle) {
+          let index;
+          do { index = Math.floor(Math.random()*words.length); }
+          while (index === lastWord || active.has(index));
+          lastWord = index;
+          startSparkle(index);
+          nextTwinkle = elapsed + random(500, 1000);
+        }
+        for (const [index, state] of active) {
+          const progress = (elapsed-state.start) / state.duration;
+          if (progress >= 1) {
+            clearSparkle(index, state);
+            active.delete(index);
+            continue;
+          }
+          const shineX = state.x - state.width/2 - 22 + progress*(state.width+44);
+          const glow = Math.pow(Math.sin(Math.PI * progress), 5);
+          state.gradient.setAttribute('x1', shineX - 22);
+          state.gradient.setAttribute('x2', shineX + 22);
+          state.gradient.setAttribute('y1', state.y);
+          state.gradient.setAttribute('y2', state.y);
+          words[index].style.filter = `drop-shadow(0 0 ${2.5*glow}px rgba(255,255,255,${.65*glow}))`;
+          state.star.setAttribute('opacity', (.9*glow).toFixed(3));
+          state.star.setAttribute('transform', `translate(${shineX},${state.y-6}) scale(${.5+.5*glow})`);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    document.addEventListener('visibilitychange', () => { previousTime = null; });
+    requestAnimationFrame(tick);
+  })();
+  </script>
+</body>
+</html>
